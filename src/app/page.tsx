@@ -1,11 +1,13 @@
 import { Pokemon } from "@/types";
-import { PokemonCard } from "@/components/PokemonCard";
+import { PokemonCard } from "@/components/pokemon-card";
 import { fetchPokemonDetails, getCompletePokemonList } from "@/lib/pokeapi";
-import DiceButton from "@/components/DiceButton";
+import DiceButton from "@/components/dice-button";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 
 async function getRandomPokemons(
   allPokemon: { name: string; url: string }[],
-  count = 4
+  count: number
 ): Promise<Pokemon[]> {
   const shuffled = allPokemon.sort(() => 0.5 - Math.random());
   const selected = shuffled.slice(0, count);
@@ -20,7 +22,7 @@ async function getRandomPokemons(
 
 export default async function Home() {
   const allPokemon = await getCompletePokemonList();
-  const pokemons = await getRandomPokemons(allPokemon, 4);
+  const pokemons = await getRandomPokemons(allPokemon, 5);
 
   return (
     <main className="content-grid">
@@ -39,11 +41,14 @@ export default async function Home() {
       <section className="bg-linear-to-r from-pink-50/50 to-pink-100/50 full-width">
         <div className="flex flex-col gap-12 py-20 ">
           <h3 className="text-center text-5xl">Featured Pokémon</h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-5 gap-4">
             {pokemons.map((pokemon) => (
               <PokemonCard key={pokemon.id} pokemon={pokemon} />
             ))}
           </div>
+          <Link href="/pokedex" className="flex items-center gap-1 self-end hover:bg-neutral-200 px-2 py-1 rounded transition">
+            <span>View all Pokémon</span> <ArrowRight size={16} />
+          </Link>
         </div>
       </section>
     </main>

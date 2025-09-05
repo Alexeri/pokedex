@@ -52,7 +52,7 @@ export default function SearchDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <div className="flex basis-1/3 items-center gap-2 px-3 py-2 rounded-md border cursor-pointer text-gray-500">
+        <div className="basis-1/3 items-center gap-2 px-3 py-2 rounded-md border cursor-pointer text-gray-500 hidden md:flex">
           <Search size={16} />
           <span>Search Pokémon...</span>
         </div>
@@ -95,14 +95,14 @@ export default function SearchDialog({
                       onClick={() => setOpen(false)}
                     >
                       <Image
-                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/${p.url
+                        src={`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/home/${p.url
                           .split("/")
                           .filter(Boolean)
                           .pop()}.png`}
                         alt=""
                         width={20}
                         height={20}
-                        className="w-5 h-5"
+                        className="w-7 h-7 object-cover"
                       />
                       <span>{p.name}</span>
                     </Link>

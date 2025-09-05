@@ -1,22 +1,30 @@
-import { PokemonCard } from "@/components/PokemonCard";
+import { PokemonCard } from "@/components/pokemon-card";
 import { Pokemon } from "@/types";
-import Sidebar from "@/components/Sidebar";
+import Sidebar from "@/components/pokedex/sidebar/sidebar";
 import {
   fetchPokemonByType,
   fetchPokemonDetails,
   getCompletePokemonList,
   sortPokemonById,
+  sortPokemonByName,
 } from "@/lib/pokeapi";
-import Pagination from "@/components/Pagination";
+import Pagination from "@/components/pokedex/pagination";
+import SortByDropdown from "@/components/pokedex/sortby-dropdown";
 
 export default async function PokedexPage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string; type?: string; search?: string }>;
+  searchParams: Promise<{
+    page?: string;
+    type?: string;
+    search?: string;
+    sort_by?: string;
+  }>;
 }) {
   const params = await searchParams;
   const type = params.type;
   const search = params.search?.toLowerCase() || null;
+  const sortBy = (params.sort_by === "name" ? "name" : "id") as "id" | "name";
   const currentPage = parseInt(params.page || "1", 10);
   const limit = 20;
   const offset = (currentPage - 1) * limit;
@@ -25,22 +33,21 @@ export default async function PokedexPage({
   let total = 0;
 
   try {
-    let baseList;
-
     // fetch base list based on filter selected
-    if (type) {
-      baseList = await fetchPokemonByType(type);
-    } else {
-      baseList = await getCompletePokemonList();
-    }
-
+    const baseList = type
+      ? await fetchPokemonByType(type)
+      : await getCompletePokemonList();
+      
     // filter by search if any
-    if (search) {
-      baseList = baseList.filter((p) => p.name.toLowerCase().includes(search));
-    }
+    const filteredList = search
+      ? baseList.filter((p) => p.name.toLowerCase().includes(search))
+      : baseList;
 
-    // sort by id
-    const sortedList = sortPokemonById(baseList);
+    // sorting by name/id
+    const sortedList =
+      sortBy === "name"
+        ? sortPokemonByName(filteredList)
+        : sortPokemonById(filteredList);
 
     // paginate
     total = sortedList.length;
@@ -59,11 +66,14 @@ export default async function PokedexPage({
   const end = Math.min(offset + pokemons.length, total);
 
   return (
-    <main className="content-grid pt-6 pb-12 bg-neutral-100">
+    <main className="content-grid pt-6 pb-12 bg-muted">
       <div className="flex gap-4">
         <Sidebar />
         <div className="flex-1 min-h-[calc(100dvh-82px)]">
-          <h1 className="text-3xl mb-4">Pokédex</h1>
+          <div className="flex justify-between items-center mb-4">
+            <h1 className="text-3xl">Pokédex</h1>
+            <SortByDropdown />
+          </div>
           {total === 0 ? (
             <p className="text-center text-lg text-gray-600">
               No results found
@@ -85,7 +95,9 @@ export default async function PokedexPage({
                 <Pagination
                   currentPage={currentPage}
                   totalPages={totalPages}
+                  search={search ?? undefined}
                   type={type}
+                  sortBy={sortBy}
                 />
               </div>
             </>

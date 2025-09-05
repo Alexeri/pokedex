@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { typeColors } from "@/utils/pokemon-colors";
+
 import type { Pokemon } from "@/types";
 import { CircleQuestionMark } from "lucide-react";
+import { cn, typeColors } from "@/lib/utils";
 
 interface PokemonCardProps {
   pokemon: Pokemon;
@@ -19,7 +20,7 @@ export function PokemonCard({
       <Card className="hover:scale-[1.02]  border-blue-800 border-6 bg-blue-50 gap-2 transition-all">
         <CardHeader className="">
           <div
-            className={` w-2/3 aspect-square rounded-full border-4 overflow-hidden mx-auto p-2 bg-white flex justify-center items-center`}
+            className={cn(`w-2/3 aspect-square rounded-full border-4 overflow-hidden mx-auto p-2 bg-white flex justify-center items-center`)}
             style={{
               borderColor: `${typeColors[pokemon.types[0].type.name]}`,
             }}
@@ -45,7 +46,7 @@ export function PokemonCard({
                 backgroundColor: `${typeColors[pokemon.types[0].type.name]}50`,
               }}
             >
-              #{pokemon.id}
+              #{pokemon.id.toString().padStart(3, "0")}
             </p>
             <p className="capitalize font-jersey text-4xl text-center truncate w-full">
               {pokemon.name}

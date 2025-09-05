@@ -1,23 +1,28 @@
+import { buildPokedexUrl } from "@/lib/pokeapi";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 
 interface PaginationProps {
   currentPage: number;
   totalPages: number;
+  search?: string;
   type?: string | null;
+  sortBy?: "id" | "name";
 }
 
 export default function Pagination({
   currentPage,
   totalPages,
+  search,
   type,
+  sortBy = "id",
 }: PaginationProps) {
   if (totalPages <= 1) return null;
 
   const pages = getPaginationPages(currentPage, totalPages);
 
   return (
-    <div className="flex gap-2">
+    <nav className="flex gap-2">
       {pages.map((p, i) =>
         p === "ellipsis" ? (
           <span key={`ellipsis-${i}`} className="px-3 py-1">
@@ -26,7 +31,12 @@ export default function Pagination({
         ) : (
           <Link
             key={p}
-            href={`/pokedex?page=${p}${type ? `&type=${type}` : ""}`}
+            href={buildPokedexUrl({
+              search,
+              type,
+              page: p.toString(),
+              sortBy,
+            })}
             className={cn(
               "px-3 py-1 rounded transition-colors",
               p === currentPage
@@ -38,7 +48,7 @@ export default function Pagination({
           </Link>
         )
       )}
-    </div>
+    </nav>
   );
 }
 

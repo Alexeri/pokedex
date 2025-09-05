@@ -12,7 +12,6 @@ export async function getCompletePokemonList(): Promise<
   if (cachedPokemonList) {
     return cachedPokemonList;
   }
-  console.log("fetching complete Pokémon list");
 
   const res = await fetch(
     `${POKEAPI_BASE}/pokemon?limit=${POKEAPI_LIMIT}&offset=0`,
@@ -69,19 +68,26 @@ export function sortPokemonById(list: PokemonListItem[]): PokemonListItem[] {
   );
 }
 
+export function sortPokemonByName(list: PokemonListItem[]): PokemonListItem[] {
+  return [...list].sort((a, b) => a.name.localeCompare(b.name));
+}
+
 // build pokedex url with query params
 export function buildPokedexUrl({
   search,
   type,
   page = "1",
+  sortBy,
 }: {
   search?: string;
   type?: string | null;
   page?: string;
+  sortBy?: "id" | "name";
 }) {
   const params = new URLSearchParams();
   if (search?.trim()) params.set("search", search.trim().toLowerCase());
   if (type) params.set("type", type);
+  if (sortBy && sortBy !== "id") params.set("sort_by", sortBy);
   params.set("page", page);
 
   return params.toString() ? `/pokedex?${params.toString()}` : "/pokedex";

@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { Jaldi, Jersey_10 } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
+import Navbar from "@/components/layout/navbar/navbar";
+import Footer from "@/components/layout/footer";
 import NextTopLoader from "nextjs-toploader";
 
 const jaldi = Jaldi({
@@ -30,7 +30,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={`${jaldi.variable} ${jersey.variable} antialiased`}>
-        <NextTopLoader color="#193cb8" height={5} />
+        <NextTopLoader color="#193cb8" height={5} showSpinner={false} />
         <Navbar />
         {children}
         <Footer />
